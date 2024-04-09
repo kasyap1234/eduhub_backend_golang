@@ -10,7 +10,6 @@ import (
 	"github.com/supertokens/supertokens-golang/supertokens"
 )
 
-// InitSuperTokens initializes SuperTokens with the provided configuration
 func InitSuperTokens(router *gin.Engine, apiBasePath, websiteBasePath string) error {
 	// Initialize SuperTokens
 	err := supertokens.Init(supertokens.TypeInput{
@@ -35,10 +34,19 @@ func InitSuperTokens(router *gin.Engine, apiBasePath, websiteBasePath string) er
 
 	// Attach SuperTokens middleware to the router
 	router.Use(func(c *gin.Context) {
-		supertokens.Middleware(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
-			// Your middleware logic here
-		})).ServeHTTP(c.Writer, c.Request)
-		c.Abort()
+		supertokens.Middleware(http.HandlerFunc(
+			func(rw http.ResponseWriter, r *http.Request) {
+				if r.Method == http.MethodPost && r.URL.Path == "/auth/signup" {
+					// Handle signup logic
+					rw.Write([]byte("Handling signup logic"))
+				} else if r.Method == http.MethodPost && r.URL.Path == "/auth/signin" {
+					// Handle signin logic
+					rw.Write([]byte("Handling signin logic"))
+				} else {
+					c.Next() // Proceed to the next middleware/handler
+				}
+			})).ServeHTTP(c.Writer, c.Request)
+		c.Abort() // Ensure that the chain is not continued unless Next is explicitly called
 	})
 
 	return nil

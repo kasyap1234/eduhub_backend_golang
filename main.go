@@ -16,8 +16,6 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	// Create a Gin router
-	gin.SetMode(gin.ReleaseMode)
 	router := gin.New()
 
 	// Allow all origins (CORS)
@@ -35,9 +33,6 @@ func main() {
 		log.Fatal("Error initializing SuperTokens:", err)
 	}
 	log.Println("SuperTokens initialized")
-	router.POST("/auth/signup")
-	router.POST("/auth/signin")
 
-	// Start the server
 	router.Run(":8080")
 }
