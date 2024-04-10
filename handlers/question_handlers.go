@@ -1,10 +1,18 @@
 package handlers
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/kasyap1234/eduhub_backend_golang/database"
+)
 
-func GetQuestions(c *gin.Context) {
+func GetAllQuestions(c *gin.Context) {
+	collection := database.GetMongoClient().Database("college").Collection("questions")
 
 }
+func GetQuestionByID(c *gin.Context) {
+
+}
+
 func AddQuestion(c *gin.Context) {
 
 }
