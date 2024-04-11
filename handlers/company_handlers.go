@@ -7,6 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/kasyap1234/eduhub_backend_golang/database"
 	model "github.com/kasyap1234/eduhub_backend_golang/models"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"gopkg.in/mgo.v2/bson"
 )
 
 func GetAllCompanies(c *gin.Context) {
@@ -33,7 +35,27 @@ func AddCompany(c *gin.Context) error {
 	return err
 
 }
-func GetCompaniesByID() {
+func GetCompaniesByID(c *gin.Context) {
+	companyId :=c.Param("companyId");
+	objID,err :=primitive.ObjectIDFromHex(companyID);
+	collection :=databaase.GetMongoClient().Database("college").Collection("companies")
+
+	if err!= nil {
+		c.JSON(http.StatusBadRequest,gin.H{"error":"invalid company ID"})
+		return
+	}
+	filter :=bson.D{{"_id",objID}};
+	company,err :=database.FindOneById(collection, filter);
+	if err !=nil {
+		c.JSON(http.StatusInternalServerError,gin.H{"error": "failed to fetch company by ID "})
+return
+	}
+	if company ==nil {
+		c.JSON(http.StatusNotFound,gin.H{"error": "Company Not found"})
+		return
+	}
+	c.JSON(http.StatusOK,company);
+
 
 }
 func UpdateCompany(c *gin.Context) {
