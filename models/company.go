@@ -1,6 +1,7 @@
 package model
 
 type Company struct {
-	Name string `json: "name"  bson : "name"`
-	Url  string `json: "Url" bson: "url"`
+	CompanyID string `json: "CompanyID" bson: "CompanyID"`
+	Name      string `json: "name"  bson : "name"`
+	Url       string `json: "Url" bson: "url"`
 }

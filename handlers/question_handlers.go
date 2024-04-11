@@ -21,14 +21,14 @@ func GetAllQuestions(c *gin.Context) {
 	c.JSON(http.StatusOK, questions)
 }
 func GetQuestionByID(c *gin.Context) {
-	questionID := c.Param("questionId")
+	questionID := c.Param("questionID")
 	objID, err := primitive.ObjectIDFromHex(questionID)
-	collection := database.GetMongoClient().Database("college").collection("questions")
+	collection := database.GetMongoClient().Database("college").Collection("questions")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "incorrect  request body  "})
 		return
 	}
-	filter := bson.D{{"_id": objID}}
+	filter := bson.D{{"questionID",objID}}
 	question, err := database.FindOneById(collection, filter)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch question by ID "})
@@ -48,53 +48,55 @@ func AddQuestion(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
-	collection := database.GetMongoClient().Database("college").collection("questions")
+	collection := database.GetMongoClient().Database("college").Collection("questions")
 	err := database.InsertOne(collection, newQuestion)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to add question"})
 		log.Fatal(err)
 
 	}
-return
+	return
 
 }
 func UpdateQuestion(c *gin.Context) {
 	var updatedQuestion model.Question
-	if err := c.BindJSON(&updatedCompany); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{{"error": "invalid request body"}})
+	if err := c.BindJSON(&updatedQuestion); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
-questionID :=c.Param("questionId");
-objID,err:=primitive.ObjectIDFromHex(questionID);
-if err !=nil {
-	c.JSON(http.StatusBadRequest,gin.H{{"error": "invalid Question ID "}});
-}
+	questionID := c.Param("questionID")
+	objID, err := primitive.ObjectIDFromHex(questionID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid Question ID "})
+	}
 
-filter := bson.D{{"questionId", objID}}
-update :=bson.D{{"$set",bson.D{{"Title",updatedQuestion.Title}, {"Text",updatedQuestion.Text},{"Answer",updatedQuestion.Answer}}}
-_,err := database.UpdateOne(collection,filter, update)
-if err !=nil {
-	c.JSON(http.StatusInternalServerError,gin.H{"error": "unable to update question"})
-	return
-}
-c.JSON(http.StatusOK,gin.H{"message": "question updated successfully "});
+	filter := bson.D{{"questionId", objID}}
+	update := bson.D{{"$set", bson.D{{"Title", updatedQuestion.Title}, {"Text", updatedQuestion.Text}, {"Answer", updatedQuestion.Answer}}}}
+     collection := database.GetMongoClient().Database("college").Collection("questions")
+	  database.UpdateOne(collection, filter, update)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to update question"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "question updated successfully "})
 
 }
 
 func DeleteQuestion(c *gin.Context) {
-questionID :=c.Param("questionId");
-objID,err :=primitive.ObjectIDFromHex(questionID);
-if err !=nil {
-	c.JSON(http.StatusBadRequest,gin.H{"error": "invalid question id "})
-	return
-}
-filter :=bson.D{{"questionId",objID}};
-collection := database.GetMongoClient().Database("college").collection("questions");
-_, err: = database.DeleteOne(collection,filter);
-if err !=nil {
-	c.JSON(http.StatusInternalServerError,gin.H{"error": "unable to delete question"});
-	return
-}
-c.JSON(http.StatusOK,gin.H{"message": "successfully deleted question "});
+	questionID := c.Param("questionID")
+	objID, err := primitive.ObjectIDFromHex(questionID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid question id "})
+		return
+	}
+	filter := bson.D{{"questionId", objID}}
+	collection := database.GetMongoClient().Database("college").Collection("questions")
+	err = database.DeleteOne(collection, filter)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to delete question"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "successfully deleted question "})
 
 }

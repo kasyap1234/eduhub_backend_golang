@@ -6,7 +6,8 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"github.com/kasyap1234/eduhub_backend_golang/auth"
+	// "github.com/kasyap1234/eduhub_backend_golang/auth"
+	"github.com/kasyap1234/eduhub_backend_golang/handlers"
 )
 
 func main() {
@@ -27,12 +28,18 @@ func main() {
 	}))
 
 	// Initialize SuperTokens and set up authentication configurations from auth package
-	apiBasePath := "/auth"
-	websiteBasePath := "/auth"
-	if err := auth.InitSuperTokens(router, apiBasePath, websiteBasePath); err != nil {
-		log.Fatal("Error initializing SuperTokens:", err)
-	}
-	log.Println("SuperTokens initialized")
+	// apiBasePath := "/auth"
+	// websiteBasePath := "/auth"
+	// if err := auth.InitSuperTokens(router, apiBasePath, websiteBasePath); err != nil {
+	// 	log.Fatal("Error initializing SuperTokens:", err)
+	// }
+	// log.Println("SuperTokens initialized")
+
+	router.GET("/company/Getallcompanies", handlers.GetAllCompanies)
+	router.GET("/company/GetcompanybyID/:id", handlers.GetCompanyByID)
+	router.PUT("/company/updateCompany/:id", handlers.UpdateCompany)
+	router.POST("/company/createCompany", handlers.AddCompany)
+	router.DELETE("/company/DeleteCompany/:id", handlers.DeleteCompany)
 
 	router.Run(":8080")
 }

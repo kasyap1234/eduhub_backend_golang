@@ -6,6 +6,7 @@ import (
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"gopkg.in/mgo.v2/bson"
 )
 
 var client *mongo.Client
@@ -28,7 +29,7 @@ func GetContext() context.Context {
 }
 func FindAll(collection *mongo.Collection) ([]interface{}, error) {
 	var results []interface{}
-	cursor, err := collection.Find(GetContext().bson.D{})
+	cursor, err := collection.Find(GetContext(), bson.D{})
 	if err != nil {
 		return nil, err
 	}
@@ -56,16 +57,18 @@ func InsertOne(collection *mongo.Collection, document interface{}) error {
 	return err
 
 }
+
 func UpdateOne(collection *mongo.Collection, filter interface{}, update interface{}) {
 	_, err := collection.UpdateOne(GetContext(), filter, update)
 	if err != nil {
 		log.Fatal(err)
 	}
 }
-func DeleteOne(collection *mongo.Collection, filter interface{}) {
+func DeleteOne(collection *mongo.Collection, filter interface{}) error {
 	_, err := collection.DeleteOne(GetContext(), filter)
 	if err != nil {
 		log.Fatal(err)
+		return err
 	}
-
+	return err
 }
