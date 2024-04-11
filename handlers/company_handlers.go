@@ -35,32 +35,61 @@ func AddCompany(c *gin.Context) error {
 	return err
 
 }
-func GetCompaniesByID(c *gin.Context) {
-	companyId :=c.Param("companyId");
-	objID,err :=primitive.ObjectIDFromHex(companyID);
-	collection :=databaase.GetMongoClient().Database("college").Collection("companies")
+func GetCompanyByID(c *gin.Context) {
+	companyId := c.Param("companyId")
+	objID, err := primitive.ObjectIDFromHex(companyID)
+	collection := database.GetMongoClient().Database("college").Collection("companies")
 
-	if err!= nil {
-		c.JSON(http.StatusBadRequest,gin.H{"error":"invalid company ID"})
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid company ID"})
 		return
 	}
-	filter :=bson.D{{"_id",objID}};
-	company,err :=database.FindOneById(collection, filter);
-	if err !=nil {
-		c.JSON(http.StatusInternalServerError,gin.H{"error": "failed to fetch company by ID "})
-return
-	}
-	if company ==nil {
-		c.JSON(http.StatusNotFound,gin.H{"error": "Company Not found"})
+	filter := bson.D{{"_id", objID}}
+	company, err := database.FindOneById(collection, filter)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch company by ID "})
 		return
 	}
-	c.JSON(http.StatusOK,company);
-
+	if company == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Company Not found"})
+		return
+	}
+	c.JSON(http.StatusOK, company)
 
 }
 func UpdateCompany(c *gin.Context) {
+	var updatedCompany models.Company
+	if err := c.BindJSON(&updateadCompany); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		return
+	}
+	companyID := c.Param("companyId")
+	objID, err := primitive.ObjectIDFromHex(companyID)
+
+	filter := bson.D{{"companyId", objID}}
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid company id "})
+		return
+	}
+	update := bson.D{{"$set", bson.D{{"name", updatedCompany.name}, {"Url", updatedCompany.Url}}}}
+	collection := database.GetMongoClient().Database("college").Collection("companies")
+	_, err := database.UpdateOne(collection, filter, update)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update company"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Company Updated successfully "})
 
 }
 func DeleteCompany(c *gin.Context) {
+	companyID := c.Param("companyId")
+	filter := bson.D{{"companyId", companyID}}
+	collection := database.GetMongoClient().Database("college").Collection("companies")
+	_, err := database.DeleteOne(collection, filter)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete company "})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Company deleted successfully "})
 
 }

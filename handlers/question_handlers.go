@@ -64,8 +64,13 @@ func UpdateQuestion(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{{"error": "invalid request body"}})
 		return
 	}
-questionID :=c.param("questionId");
-filter := bson.D{{"questionId", questionID}}
+questionID :=c.Param("questionId");
+objID,err:=primitive.ObjectIDFromHex(questionID);
+if err !=nil {
+	c.JSON(http.StatusBadRequest,gin.H{{"error": "invalid Question ID "}});
+}
+
+filter := bson.D{{"questionId", objID}}
 update :=bson.D{{"$set",bson.D{{"Title",updatedQuestion.Title}, {"Text",updatedQuestion.Text},{"Answer",updatedQuestion.Answer}}}
 _,err := database.UpdateOne(collection,filter, update)
 if err !=nil {
@@ -77,5 +82,19 @@ c.JSON(http.StatusOK,gin.H{"message": "question updated successfully "});
 }
 
 func DeleteQuestion(c *gin.Context) {
+questionID :=c.Param("questionId");
+objID,err :=primitive.ObjectIDFromHex(questionID);
+if err !=nil {
+	c.JSON(http.StatusBadRequest,gin.H{"error": "invalid question id "})
+	return
+}
+filter :=bson.D{{"questionId",objID}};
+collection := database.GetMongoClient().Database("college").collection("questions");
+_, err: = database.DeleteOne(collection,filter);
+if err !=nil {
+	c.JSON(http.StatusInternalServerError,gin.H{"error": "unable to delete question"});
+	return
+}
+c.JSON(http.StatusOK,gin.H{"message": "successfully deleted question "});
 
 }
