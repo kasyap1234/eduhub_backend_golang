@@ -28,21 +28,21 @@ func GetContext() context.Context {
 
 }
 func FindAll(collection *mongo.Collection) ([]interface{}, error) {
-    var results []interface{}
-    cursor, err := collection.Find(GetContext(), bson.M{})
-    if err != nil {
-        log.Printf("Error executing Find: %v", err)
-        return nil, err
-    }
-    
-    err = cursor.All(GetContext(), &results)
-    if err != nil {
-        log.Printf("Error retrieving documents: %v", err)
-        return nil, err
-    }
-    defer cursor.Close(context.Background())
-    
-    return results, nil
+	var results []interface{}
+	cursor, err := collection.Find(GetContext(), bson.M{})
+	if err != nil {
+		log.Printf("Error executing Find: %v", err)
+		return nil, err
+	}
+
+	err = cursor.All(GetContext(), &results)
+	if err != nil {
+		log.Printf("Error retrieving documents: %v", err)
+		return nil, err
+	}
+	defer cursor.Close(context.Background())
+
+	return results, nil
 }
 func FindOneById(collection *mongo.Collection, filter interface{}) (interface{}, error) {
 	var result interface{}

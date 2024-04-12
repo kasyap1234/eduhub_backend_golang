@@ -52,7 +52,7 @@ func main() {
 		r2.PUT("/updateQuestion/:id", handlers.UpdateQuestion)
 		r2.POST("/createQuestion", handlers.AddQuestion)
 		r2.DELETE("/DeleteQuestion/:id", handlers.DeleteQuestion)
-
+        
 	}
 	
 

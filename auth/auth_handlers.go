@@ -1,54 +1,26 @@
 // package auth
 package auth
 
-// import (
-// 	"net/http"
-// 	"os"
+import (
+	"github.com/gin-gonic/gin"
+	model "github.com/kasyap1234/eduhub_backend_golang/models"
+	"go.mongodb.org/mongo-driver/mongo"
+)
+var (
+	jwtKey =[]byte("your_secret_key")
+	mongoURI = "mongodb://localhost:27017"
+	dbName="college"
+	collectionName="users"
+	client *mongo.Client
+	collection *mongo.Collection
 
-// 	"github.com/gin-gonic/gin"
-// 	"github.com/supertokens/supertokens-golang/recipe/emailpassword"
-// 	"github.com/supertokens/supertokens-golang/recipe/session"
-// 	"github.com/supertokens/supertokens-golang/supertokens"
-// )
+)
+func init(){
+	collection :=client.Database(dbName).Collection(collectionName)
 
-// func InitSuperTokens(router *gin.Engine, apiBasePath, websiteBasePath string) error {
-// 	// Initialize SuperTokens
-// 	err := supertokens.Init(supertokens.TypeInput{
-// 		Supertokens: &supertokens.ConnectionInfo{
-// 			ConnectionURI: "https://try.supertokens.com", // Replace with your SuperTokens connection URI
-// 		},
-// 		AppInfo: supertokens.AppInfo{
-// 			AppName:         os.Getenv("APP_NAME"),
-// 			APIDomain:       os.Getenv("API_DOMAIN"),
-// 			WebsiteDomain:   os.Getenv("WEBSITE_DOMAIN"),
-// 			APIBasePath:     &apiBasePath,     // Use pointer to string
-// 			WebsiteBasePath: &websiteBasePath, // Use pointer to string
-// 		},
-// 		RecipeList: []supertokens.Recipe{
-// 			emailpassword.Init(nil),
-// 			session.Init(nil),
-// 		},
-// 	})
-// 	if err != nil {
-// 		return err
-// 	}
+}
+func RegisterUser(c *gin.Context){
+	var newUser model.User
 
-// 	// Attach SuperTokens middleware to the router
-// 	router.Use(func(c *gin.Context) {
-// 		supertokens.Middleware(http.HandlerFunc(
-// 			func(rw http.ResponseWriter, r *http.Request) {
-// 				if r.Method == http.MethodPost && r.URL.Path == "/auth/signup" {
-// 					// Handle signup logic
-// 					rw.Write([]byte("Handling signup logic"))
-// 				} else if r.Method == http.MethodPost && r.URL.Path == "/auth/signin" {
-// 					// Handle signin logic
-// 					rw.Write([]byte("Handling signin logic"))
-// 				} else {
-// 					c.Next() // Proceed to the next middleware/handler
-// 				}
-// 			})).ServeHTTP(c.Writer, c.Request)
-// 		c.Abort() // Ensure that the chain is not continued unless Next is explicitly called
-// 	})
 
-// 	return nil
-// }
+}
