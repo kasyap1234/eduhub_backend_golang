@@ -37,11 +37,24 @@ func main() {
 	// }
 	// log.Println("SuperTokens initialized")
     log.Default().Println("Server is running on port 8080")
-	router.GET("/company/Getallcompanies", handlers.GetAllCompanies)
-	router.GET("/company/GetcompanybyID/:id", handlers.GetCompanyByID)
-	router.PUT("/company/updateCompany/:id", handlers.UpdateCompany)
-	router.POST("/company/createCompany", handlers.AddCompany)
-	router.DELETE("/company/DeleteCompany/:id", handlers.DeleteCompany)
+	r1 := router.Group("/company") 
+	{
+	r1.GET("/Getallcompanies", handlers.GetAllCompanies)
+	r1.GET("/GetcompanybyID/:id", handlers.GetCompanyByID)
+	r1.PUT("/updateCompany/:id", handlers.UpdateCompany)
+	r1.POST("/createCompany", handlers.AddCompany)
+	r1.DELETE("/DeleteCompany/:id", handlers.DeleteCompany)
+	}
+	r2 :=router.Group("/question")
+	{
+		r2.GET("/Getallquestions", handlers.GetAllQuestions)
+		r2.GET("/GetquestionbyID/:id", handlers.GetQuestionByID)
+		r2.PUT("/updateQuestion/:id", handlers.UpdateQuestion)
+		r2.POST("/createQuestion", handlers.AddQuestion)
+		r2.DELETE("/DeleteQuestion/:id", handlers.DeleteQuestion)
+
+	}
+	
 
 	router.Run(":8080")
 }
