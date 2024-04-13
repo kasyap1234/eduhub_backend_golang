@@ -21,6 +21,6 @@ func init(){
 }
 func RegisterUser(c *gin.Context){
 	var newUser model.User
-
+if err := c.ShouldBindJSON()
 
 }
