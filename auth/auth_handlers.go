@@ -4,6 +4,7 @@ package auth
 import (
 	"context"
 	"fmt"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/kasyap1234/eduhub_backend_golang/database"
@@ -39,6 +40,13 @@ func RegisterUser(c *gin.Context) {
 		return
 	}
 	// hash password ;
+	hashedPassword, err := hashPassword(newUser.Password)
+	if err != nil {
+		c.JSON(500, gin.H{"error": "Failed to hash password"})
+		return
+	}
+	newUser.Password = hashedPassword
+
 	collection := database.GetMongoClient().Database("college").Collection("auth")
 	err = database.InsertOne(collection, newUser)
 
@@ -50,5 +58,41 @@ func RegisterUser(c *gin.Context) {
 
 }
 func LoginUser(c *gin.Context) {
+	var credentials struct {
+		Username string `json: "Username"`
+		Password string `json:"password"`
+	}
+	if err := c.ShouldBindJSON(&credentials); err != nil {
+		c.JSON(400, gin.H{"error": "Invalid request data"})
+		return
+	}
+	var user User
+	collection := database.GetMongoClient().Database("college").Collection("auth")
+	filter := bson.M{"Username": credentials.Username}
+
+	results, error := database.FindOneById(collection, filter)
+	if error != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+   return 
+	}
+	 err :=bcrypt.CompareHashAndPassword([]byte(user.Password),[]byte (credentials.Password)){
+		c.JSON(401,gin.H{"errror": "invalid credentials"})
+		
+		return 
+	}
+     expirationTime :=time.Now().Add(24* time.Hour)
+ claims :=&Claims{
+UserId : user.ID.Hex(),
+Role: user.Role,
+StandardClaims: jwt.StandardClaims{
+	ExpiresAt: expirationTime.Unix(),
 
 }
+token :=jwt.NewWithClaims(jwt.SigningMethodHS256,claims); 
+tokenString, err:=token.SignedString(jwtkey); 
+if err !=nil {
+	c.JSON(500,gin.H{"error": "Failed to generate token"})
+	return 
+}
+c.JSON(200,gin.H{"token": tokenString, "expires": expirationTime})
+ }
