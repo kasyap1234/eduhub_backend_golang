@@ -73,12 +73,12 @@ func LoginUser(c *gin.Context) {
 	results, error := database.FindOneById(collection, filter)
 	if error != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
-   return 
+   return
 	}
 	 err :=bcrypt.CompareHashAndPassword([]byte(user.Password),[]byte (credentials.Password)){
 		c.JSON(401,gin.H{"errror": "invalid credentials"})
-		
-		return 
+
+		return
 	}
      expirationTime :=time.Now().Add(24* time.Hour)
  claims :=&Claims{
@@ -88,11 +88,30 @@ StandardClaims: jwt.StandardClaims{
 	ExpiresAt: expirationTime.Unix(),
 
 }
-token :=jwt.NewWithClaims(jwt.SigningMethodHS256,claims); 
-tokenString, err:=token.SignedString(jwtkey); 
+token :=jwt.NewWithClaims(jwt.SigningMethodHS256,claims);
+tokenString, err:=token.SignedString(jwtkey);
 if err !=nil {
 	c.JSON(500,gin.H{"error": "Failed to generate token"})
-	return 
+	return
 }
 c.JSON(200,gin.H{"token": tokenString, "expires": expirationTime})
  }
+
+func hashPassword(password string)(string,error){
+	hashedPassword,err :=bcrypt.GenerateFromPassword([]byte(password),bcrypt.DefaultCost)
+   if err !=nil {
+   return "", err
+   }
+   return string(hashedPassword),nil
+}
+func AuthMiddleware() gin.HandlerFunc{
+	return func(c *gin.Context){
+		tokenString :=c.GetHeader("Authorization")
+		if tokenString == ""{
+			c.JSON(401,gin.H{"error": "Authorization header is required"})
+			c.Abort()
+			return
+		}
+		token, err :=jwt.ParseWithClaims(tokenString,&Claims{},)
+	}
+}
