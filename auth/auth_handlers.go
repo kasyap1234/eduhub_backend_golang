@@ -104,14 +104,50 @@ func hashPassword(password string)(string,error){
    }
    return string(hashedPassword),nil
 }
-func AuthMiddleware() gin.HandlerFunc{
-	return func(c *gin.Context){
-		tokenString :=c.GetHeader("Authorization")
-		if tokenString == ""{
-			c.JSON(401,gin.H{"error": "Authorization header is required"})
-			c.Abort()
-			return
-		}
-		token, err :=jwt.ParseWithClaims(tokenString,&Claims{},)
-	}
+func AuthMiddleware() gin.HandlerFunc {
+    return func(c *gin.Context) {
+        tokenString := c.GetHeader("Authorization")
+        if tokenString == "" {
+            c.JSON(401, gin.H{"error": "Authorization header is required"})
+            c.Abort()
+            return
+        }
+
+        token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+            return jwtKey, nil
+        })
+        if err != nil {
+            c.JSON(401, gin.H{"error": "Invalid token"})
+            c.Abort()
+            return
+        }
+
+        claims, ok := token.Claims.(*Claims)
+        if !ok || !token.Valid {
+            c.JSON(401, gin.H{"error": "Invalid token"})
+            c.Abort()
+            return
+        }
+
+        // Set user context
+        c.Set("user_id", claims.UserID)
+        c.Set("role", claims.Role)
+
+        c.Next()
+    }
+}
+
+// RoleAuthMiddleware is a middleware for role-based authorization
+func RoleAuthMiddleware(roles ...string) gin.HandlerFunc {
+    return func(c *gin.Context) {
+        role := c.GetString("role")
+        for _, allowedRole := range roles {
+            if role == allowedRole {
+                c.Next()
+                return
+            }
+        }
+        c.JSON(403, gin.H{"error": "Insufficient permissions"})
+        c.Abort()
+    }
 }
