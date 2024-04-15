@@ -1,6 +1,12 @@
 package handlers 
-
-
+import (
+	"net/http"
+	"github.com/gin-gonic/gin"
+	"github.com/kasyap1234/eduhub_backend_golang/database"
+	model "github.com/kasyap1234/eduhub_backend_golang/models"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"gopkg.in/mgo.v2/bson"
+)
 func getAllBlogs(c *gin.Context){
 	collection :=database.GetMongoClient().Database("college").Collection("blogs"); 
 	blogs,err := database.FindAll(collection); 
@@ -53,7 +59,7 @@ func deleteBlogByID(c *gin.Context){
 	}
 	collection :=database.GetMongoClient().Database("college").Collection("blogs")
 	filter :=bson.D{{"ID",objId}}
-	err :=database.DeleteOne(collection,filter); 
+	err =database.DeleteOne(collection,filter); 
 	if err !=nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete blog"})
 		return 
@@ -74,12 +80,12 @@ func UpdateBlog(c *gin.Context){
 		return
 	}
 	collection :=database.GetMongoClient().Database("college").Collection("blogs")
-	filter :=bson.D{{"ID",objID}}
+	filter :=bson.D{{"ID",objId}}
 	update :=bson.D{{"$set",bson.D{{"title",updatedBlog.Title},{"text",updatedBlog.Text},{"author",updatedBlog.Author}}}}
-	err =database.UpdateOne(collection,filter,update);
+	database.UpdateOne(collection,filter,update);
 	if err !=nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update blog"})
 		return 
 	}
-	
+
 }
