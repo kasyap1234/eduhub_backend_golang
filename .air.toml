@@ -1,0 +1,5 @@
+# .air.toml
+root = "."  # Set the root directory of your project
+tmp_dir = "tmp"  # Set a temporary directory for Air to store build files
+build_cmd = "go build -o ./tmp/main ."
+run_cmd = "./tmp/main"
