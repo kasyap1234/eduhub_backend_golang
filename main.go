@@ -6,8 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 	// "github.com/joho/godotenv"
 
-	// "github.com/kasyap1234/eduhub_backend_golang/auth"
 	"github.com/kasyap1234/eduhub_backend_golang/auth"
+	// "github.com/kasyap1234/eduhub_backend_golang/auth"
 	"github.com/kasyap1234/eduhub_backend_golang/database"
 	"github.com/kasyap1234/eduhub_backend_golang/handlers"
 )

@@ -1,15 +1,17 @@
-// package auth
 package auth
 
 import (
 	"context"
 	"fmt"
 	"net/http"
+	"time"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/kasyap1234/eduhub_backend_golang/database"
 	model "github.com/kasyap1234/eduhub_backend_golang/models"
 	"go.mongodb.org/mongo-driver/mongo"
+	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -22,8 +24,15 @@ var (
 	collection     *mongo.Collection
 )
 
+type Claims struct {
+	UserID string `json:"user_id"`
+	Role string `json:"role"`
+	jwt.StandardClaims
+
+}
 func init() {
-	collection := client.Database(dbName).Collection(collectionName)
+	client =database.ConnectDB();
+	collection := client.Database("college").Collection("auth")
 	fmt.Print(collection)
 }
 func RegisterUser(c *gin.Context) {
@@ -66,30 +75,31 @@ func LoginUser(c *gin.Context) {
 		c.JSON(400, gin.H{"error": "Invalid request data"})
 		return
 	}
-	var user User
+	var user model.User 
 	collection := database.GetMongoClient().Database("college").Collection("auth")
 	filter := bson.M{"Username": credentials.Username}
-
-	results, error := database.FindOneById(collection, filter)
+	_, error := database.FindOneById(collection, filter)
 	if error != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
    return
 	}
-	 err :=bcrypt.CompareHashAndPassword([]byte(user.Password),[]byte (credentials.Password)){
+	 err :=bcrypt.CompareHashAndPassword([]byte(user.Password),[]byte (credentials.Password)); if err !=nil {
 		c.JSON(401,gin.H{"errror": "invalid credentials"})
 
 		return
 	}
      expirationTime :=time.Now().Add(24* time.Hour)
- claims :=&Claims{
-UserId : user.ID.Hex(),
-Role: user.Role,
-StandardClaims: jwt.StandardClaims{
-	ExpiresAt: expirationTime.Unix(),
-
-}
+	 
+     
+	 claims := &Claims{
+		UserID: user.ID.Hex(),
+		Role: user.Role,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: expirationTime.Unix(),
+		}, // This comma was missing
+	}
 token :=jwt.NewWithClaims(jwt.SigningMethodHS256,claims);
-tokenString, err:=token.SignedString(jwtkey);
+tokenString, err := token.SignedString(jwtKey)
 if err !=nil {
 	c.JSON(500,gin.H{"error": "Failed to generate token"})
 	return
