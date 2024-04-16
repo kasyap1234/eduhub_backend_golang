@@ -7,6 +7,7 @@ import (
 	// "github.com/joho/godotenv"
 
 	// "github.com/kasyap1234/eduhub_backend_golang/auth"
+	"github.com/kasyap1234/eduhub_backend_golang/auth"
 	"github.com/kasyap1234/eduhub_backend_golang/database"
 	"github.com/kasyap1234/eduhub_backend_golang/handlers"
 )
@@ -56,8 +57,9 @@ func main() {
 	}
 	r3 :=router.Group("/auth")
 	{
-		r3.POST("/login", handlers.LoginUser)
-		r3.POST("/signup", handlers.RegisterUser)
+
+		r3.POST("/login", auth.LoginUser)
+		r3.POST("/signup", auth.RegisterUser)
 		
 	}
 
