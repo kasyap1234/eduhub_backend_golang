@@ -56,8 +56,8 @@ func main() {
 	}
 	r3 :=router.Group("/auth")
 	{
-		r3.POST("/login", handlers.Login)
-		r3.POST("/signup", handlers.Signup)
+		r3.POST("/login", handlers.LoginUser)
+		r3.POST("/signup", handlers.RegisterUser)
 		
 	}
 
