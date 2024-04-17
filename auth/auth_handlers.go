@@ -114,7 +114,7 @@ func LoginUser(c *gin.Context) {
 
     c.JSON(http.StatusOK, gin.H{"token": tokenString, "expires": expirationTime})
 }
-
+// c
 func hashPassword(password string)(string,error){
 	hashedPassword,err :=bcrypt.GenerateFromPassword([]byte(password),bcrypt.DefaultCost)
    if err !=nil {
