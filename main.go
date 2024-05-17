@@ -5,12 +5,28 @@ import (
 	
 	"github.com/gin-gonic/gin"
 	// "github.com/joho/godotenv"
-
+    // _ "github.com/kasyap1234/eduhub_backend_golang/docs"
 	"github.com/kasyap1234/eduhub_backend_golang/auth"
 	// "github.com/kasyap1234/eduhub_backend_golang/auth"
 	"github.com/kasyap1234/eduhub_backend_golang/database"
 	"github.com/kasyap1234/eduhub_backend_golang/handlers"
+	 swaggerFiles "github.com/swaggo/files"
+    ginSwagger "github.com/swaggo/gin-swagger"
 )
+// @title EduHub API
+// @version 1.0
+// @description This is a sample server for EduHub.
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API Support
+// @contact.url http://www.swagger.io/support
+// @contact.email support@swagger.io
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host localhost:8080
+// @BasePath /api/v1
 
 func main() {
 	// Load environment variables from .env file
@@ -63,6 +79,6 @@ func main() {
 		r3.POST("/signup", auth.RegisterUser)
 		
 	}
-
+ r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.Run(":8080")
 }
