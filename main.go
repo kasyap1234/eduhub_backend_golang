@@ -5,7 +5,7 @@ import (
 	
 	"github.com/gin-gonic/gin"
 	// "github.com/joho/godotenv"
-
+"github.com/gin-contrib/cors"
 	"github.com/kasyap1234/eduhub_backend_golang/auth"
 	// "github.com/kasyap1234/eduhub_backend_golang/auth"
 	"github.com/kasyap1234/eduhub_backend_golang/database"

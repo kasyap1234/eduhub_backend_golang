@@ -9,6 +9,7 @@ import (
 	model "github.com/kasyap1234/eduhub_backend_golang/models"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"gopkg.in/mgo.v2/bson"
+	
 )
 
 func GetAllCompanies(c *gin.Context) {
