@@ -16,11 +16,13 @@ func GetAllCompanies(c *gin.Context) {
 	collection := database.GetMongoClient().Database("college").Collection("companies")
 	companies, err := database.FindAll(collection)
 	if err != nil {
+		
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch all the companies"})
 		return // Added return statement
 	}
 	c.JSON(http.StatusOK, companies)
 }
+
 
 // func AddCompany(c *gin.Context) {
 // 	var newCompany model.Company
