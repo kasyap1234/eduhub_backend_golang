@@ -1,5 +1,10 @@
 how are you ? 
-readme file 
+how are you ? 
 
+readme file 
+html
+css 
+javascript 
+typescript 
 
 
