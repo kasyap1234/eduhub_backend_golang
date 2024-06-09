@@ -63,6 +63,6 @@ func main() {
 		r3.POST("/signup", auth.RegisterUser)
 		
 	}
-
+   fmt.Println("Server is running on port 8080")
 	router.Run(":8080")
 }
