@@ -32,7 +32,7 @@ type Claims struct {
 
 }
 func init() {
-    fmt.Println("Initializing database connection and collection...")
+    fmt.Println("Initializing database connection and collection")
     client = database.ConnectDB()
     collection = client.Database("college").Collection("auth")
     fmt.Println("Collection initialized:", collection)
@@ -156,7 +156,7 @@ func AuthMiddleware() gin.HandlerFunc {
 }
 
 // RoleAuthMiddleware is a middleware for role-based authorization
-func RoleAuthMiddleware(roles ...string) gin.HandlerFunc {
+func RolaAuthMiddleware(roles ...string) gin.HandlerFunc {
     return func(c *gin.Context) {
         role := c.GetString("role")
         for _, allowedRole := range roles {
