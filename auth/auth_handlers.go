@@ -32,7 +32,7 @@ type Claims struct {
 
 }
 func init() {
-    fmt.Println("Initializing database connection and collection...")
+    fmt.Println("Initializing database connection and collection")
     client = database.ConnectDB()
     collection = client.Database("college").Collection("auth")
     fmt.Println("Collection initialized:", collection)
